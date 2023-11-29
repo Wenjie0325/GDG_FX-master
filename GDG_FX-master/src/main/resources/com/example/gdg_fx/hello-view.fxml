@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+
+<AnchorPane fx:id="chessboard" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.gdg_fx.HelloController">
+   <children>
+      <Line endX="799.9999389648438" endY="113.0071792602539" startX="-2.179826879000757E-6" startY="113.0071792602539" />
+      <Button layoutX="631.0" layoutY="25.0" mnemonicParsing="false" onAction="#onDiceRollButtonClick1" text="roll" />
+      <Label fx:id="welcomeText" layoutX="703.0" layoutY="49.0" />
+      <ImageView fx:id="player1" fitHeight="53.0" fitWidth="54.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@p1.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="player2" fitHeight="53.0" fitWidth="54.0" layoutY="178.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@p2.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="631.0" layoutY="64.0" mnemonicParsing="false" onAction="#onDiceRollButtonClick2" text="roll" />
+      <Label layoutX="571.0" layoutY="29.0" text="Player1" />
+      <Label layoutX="571.0" layoutY="68.0" text="Player2" />
+      <Button layoutX="188.0" layoutY="45.0" mnemonicParsing="false" onAction="#start" text="start" />
+   </children>
+</AnchorPane>

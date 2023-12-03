@@ -164,46 +164,59 @@ public class HelloController {
         rollNum.setText(String.valueOf(steps));
         showAlert("your roll:"+steps);
         int new_pos = player_1.pos + steps;
-        int pitpos = new_pos;
 
-        int type_next_pos = TypeList.get(new_pos-1);
+        if(new_pos == player_2.pos){
+            showAlert("you are stopped by the other player");
+            new_pos = new_pos-1;
+        }
 
-        if(type_next_pos == 0){
-            new_pos = new_pos;
-            setPlayerPos(player_1,new_pos);
-        } else if (type_next_pos == 1) {
-            setPlayerPos(player_1,new_pos);
-            new_pos = 1;
-            showAlert("You drop into a bottomless pit and you are sent to the first area");
-            setPlayerPos(player_1,new_pos);
-            areas.get(pitpos-1).setVisible(true);
-        } else if (type_next_pos == 2){
-            setPlayerPos(player_1,new_pos);
-            Random random = new Random();
-            int randomNumber;
-            randomNumber = random.nextInt(board.getSize()) + 1;
-            new_pos = randomNumber;
+        if(new_pos >= board.size){
+            showAlert("Win!");
+            setPlayerPos(player_1, board.size);
+        }else{
+            int pitpos = new_pos;
 
-            showAlert("You step onto a teleporter, you can select one player to be sent to a random position");
-            TeleporterChoiceDialog(new_pos,pitpos);
+            int type_next_pos = TypeList.get(new_pos-1);
 
-        } else if (type_next_pos == 3) {
-            p1_turn_count = 0;
-            setPlayerPos(player_1,new_pos);
-            showAlert("You step onto a fire pit, you will miss the next turn");
-            player_1.setTurn(false);
+            if(type_next_pos == 0){
+                new_pos = new_pos;
+                setPlayerPos(player_1,new_pos);
+            } else if (type_next_pos == 1) {
+                setPlayerPos(player_1,new_pos);
+                new_pos = 1;
+                showAlert("You drop into a bottomless pit and you are sent to the first area");
+                setPlayerPos(player_1,new_pos);
+                areas.get(pitpos-1).setVisible(true);
+            } else if (type_next_pos == 2){
+                setPlayerPos(player_1,new_pos);
+                Random random = new Random();
+                int randomNumber;
+                randomNumber = random.nextInt(board.getSize()) + 1;
+                new_pos = randomNumber;
 
+                showAlert("You step onto a teleporter, you can select one player to be sent to a random position");
+                TeleporterChoiceDialog(new_pos,pitpos);
+
+            } else if (type_next_pos == 3) {
+                p1_turn_count = 0;
+                setPlayerPos(player_1,new_pos);
+                showAlert("You step onto a fire pit, you will miss the next turn");
+                player_1.setTurn(false);
+
+            }
+
+
+            P1_roll.setVisible(false);
+            P2_roll.setVisible(true);
+
+            if(!player_2.isTurn() && p1_turn_count<1){
+                P1_roll.setVisible(true);
+                P2_roll.setVisible(false);
+                p1_turn_count++;
+            }
         }
 
 
-        P1_roll.setVisible(false);
-        P2_roll.setVisible(true);
-
-        if(!player_2.isTurn() && p1_turn_count<1){
-            P1_roll.setVisible(true);
-            P2_roll.setVisible(false);
-            p1_turn_count++;
-        }
 
 
     }
@@ -219,46 +232,59 @@ public class HelloController {
         rollNum.setText(String.valueOf(steps));
         showAlert("your roll:"+steps);
         int new_pos = player_2.pos + steps;
-        int pitpos = new_pos;
 
-        int type_next_pos = TypeList.get(new_pos-1);
+        if(new_pos == player_1.pos){
+            showAlert("you are stopped by the other player");
+            new_pos = new_pos-1;
+        }
 
-        if(type_next_pos == 0){
-            new_pos = new_pos;
-            setPlayerPos(player_2,new_pos);
-        } else if (type_next_pos == 1) {
-            setPlayerPos(player_2,new_pos);
-            new_pos = 1;
-            showAlert("You drop into a bottomless pit and you are sent to the first square");
-            setPlayerPos(player_2,new_pos);
-            areas.get(pitpos-1).setVisible(true);
-        } else if (type_next_pos == 2){
-            setPlayerPos(player_2,new_pos);
-            Random random = new Random();
-            int randomNumber;
-            randomNumber = random.nextInt(board.getSize()) + 1;
-            new_pos = randomNumber;
+        if(new_pos >= board.size){
+            showAlert("Win!");
+            setPlayerPos(player_2, board.size);
+        }else{
+            int pitpos = new_pos;
 
-            showAlert("You step onto a teleporter, you can select one player to be sent to a random position");
-            TeleporterChoiceDialog2(new_pos,pitpos);
-            areas.get(pitpos-1).setVisible(true);
-        } else if (type_next_pos == 3) {
-            p2_turn_count = 0;
-            setPlayerPos(player_2,new_pos);
-            showAlert("You step onto a fire pit, you will miss the next turn");
-            player_2.setTurn(false);
+            int type_next_pos = TypeList.get(new_pos-1);
 
+            if(type_next_pos == 0){
+                new_pos = new_pos;
+                setPlayerPos(player_2,new_pos);
+            } else if (type_next_pos == 1) {
+                setPlayerPos(player_2,new_pos);
+                new_pos = 1;
+                showAlert("You drop into a bottomless pit and you are sent to the first square");
+                setPlayerPos(player_2,new_pos);
+                areas.get(pitpos-1).setVisible(true);
+            } else if (type_next_pos == 2){
+                setPlayerPos(player_2,new_pos);
+                Random random = new Random();
+                int randomNumber;
+                randomNumber = random.nextInt(board.getSize()) + 1;
+                new_pos = randomNumber;
+
+                showAlert("You step onto a teleporter, you can select one player to be sent to a random position");
+                TeleporterChoiceDialog2(new_pos,pitpos);
+                areas.get(pitpos-1).setVisible(true);
+            } else if (type_next_pos == 3) {
+                p2_turn_count = 0;
+                setPlayerPos(player_2,new_pos);
+                showAlert("You step onto a fire pit, you will miss the next turn");
+                player_2.setTurn(false);
+
+            }
+
+
+            P2_roll.setVisible(false);
+            P1_roll.setVisible(true);
+
+            if(!player_1.isTurn() && p2_turn_count<1){
+                P2_roll.setVisible(true);
+                P1_roll.setVisible(false);
+                p2_turn_count++;
+            }
         }
 
 
-        P2_roll.setVisible(false);
-        P1_roll.setVisible(true);
-
-        if(!player_1.isTurn() && p2_turn_count<1){
-            P2_roll.setVisible(true);
-            P1_roll.setVisible(false);
-            p2_turn_count++;
-        }
 
 
     }

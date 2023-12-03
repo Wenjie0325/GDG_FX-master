@@ -19,27 +19,8 @@ public class Functions {
     }
 
     public Board init(){
-        Player player1 = new Player();
-        Player player2 = new Player();
-        Board board = new Board();
 
-        ArrayList<Player> players = new ArrayList<Player>();
-
-        int size = 16;
-
-        board.ChessBoard = new int[size];
-        board.players = players;
-        board.start = 0;
-        board.end = size - 1;
-
-        player1.setPos(board.start);
-        player2.setPos(board.start);
-
-        board.players.add(player1);
-        board.players.add(player2);
-
-        return board;
-
+        return null;
     }
 
     public Player move(int steps, Board board, Player player){

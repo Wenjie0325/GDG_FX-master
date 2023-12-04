@@ -1,8 +1,10 @@
 package unity;
 
+/**
+ * Obstruction interface contain get position function and get type function
+ */
 public interface Obstruction {
 
-    void ComputePos(Player player);
 
     int getPos();
 

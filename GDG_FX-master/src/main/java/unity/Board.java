@@ -2,14 +2,10 @@ package unity;
 
 import java.util.ArrayList;
 
+/**
+ * Board Class decides the size of the game board
+ */
 public class Board {
-    public ArrayList<Integer> ChessBoard;
-
-    public int start = 0;
-
-    public ArrayList<Player> players;
-
-    public int end;
 
     public int size=0;
 

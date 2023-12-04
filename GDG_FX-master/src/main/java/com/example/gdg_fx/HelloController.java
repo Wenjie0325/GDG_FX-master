@@ -16,10 +16,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-
+/**
+ * FXML controller of the javaFx project
+ *
+ * contain all the methods used on the fxml elements
+ *
+ * @author Cai Wenjie
+ * @version 1.0
+ */
 public class HelloController {
     Functions fc = new Functions();
 
+    /**
+     * Set id to fxml elements
+     */
     @FXML
     private Label Player1_Name_Label;
 
@@ -43,8 +53,6 @@ public class HelloController {
 
     @FXML
     private TextField name2;
-
-
 
     @FXML
     private ImageView player1;
@@ -70,16 +78,35 @@ public class HelloController {
     @FXML
     private Button setSize_Button;
 
+    /**
+     * An arrayList stores every ImageView(fxml element)
+     */
     private ArrayList<ImageView> areas = new ArrayList<ImageView>();
 
+    /**
+     * Init 2 Players
+     */
     Player player_1 = new Player(0,"Player1",0);
     Player player_2 = new Player(0,"Player2",0);
-
+    /**
+     * An arrayList stores type of obstacles of each position
+     *
+     * 0 for normal ground, 1 for bottomless pit, 2 for teleporter, 3 for fire pit
+     */
     ArrayList<Integer> TypeList = new ArrayList<Integer>();
-
+    /**
+     * Init Board
+     */
     Board board = new Board();
 
-
+    /**
+     * start() function which attached to start button
+     * check if board size bigger than 0, if not show alert
+     * @see #boardGenerate() generate the board without obstructions by board size
+     * @see #GenerateObs() generate obstructions
+     * Set P1 roll button visiable
+     * then show the alert to inform Player1 first roll
+     */
     @FXML
     protected void start() {
 
@@ -106,6 +133,13 @@ public class HelloController {
 //        }
     }
 
+    /**
+     * setsize() function which attached to setsize button
+     * get input from TextFiled in fxml
+     * and use the int number to set board. Size
+     * check the input size between 20 and 90(to make sure the board will not be too small or big)
+     * show the alert to show if the size meet the requirement
+     */
     @FXML
     protected void setSize() {
         String UserInput = Setsize.getText();
@@ -126,7 +160,11 @@ public class HelloController {
         }
 
     }
-
+    /**
+     * method to set player1 's name
+     * attached to setName_button1
+     * @see #showAlertSetName() show alert when set name success
+     */
     @FXML
     protected void setName1() {
         String UserInput = name1.getText();
@@ -144,6 +182,11 @@ public class HelloController {
 
     }
 
+    /**
+     * similar method to set player2 's name
+     * attached to setName_button2
+     * @see #showAlertSetName() show alert when set name success
+     */
     @FXML
     protected void setName2() {
         String UserInput = name2.getText();
@@ -159,48 +202,73 @@ public class HelloController {
         showAlertSetName();
     }
 
+    /**
+     * two integers to record missed turn
+     */
     int p1_turn_count = 0;
     int p2_turn_count = 0;
 
+    /**
+     * Main function to run the game, decide player1's actions
+     * attached to rollDice button of player1 in fxml
+     * fc.DiceRoll() is a method to generate random number form 1 to 9
+     * @see #showAlert(String)  method to show alert
+     * @see #setPlayerPos(Player, int)  set player to a position in fxml
+     */
     @FXML
     protected void onDiceRollButtonClick1() {
 
         if(player_1.pos>=1){
             areas.get(player_1.pos-1).setVisible(true);
         }
-        //int steps = fc.DiceRoll();
-        int steps = 1;
-
+        int steps = fc.DiceRoll();
         rollNum.setText(String.valueOf(steps));
         player_1.score += steps;
         Score_p1.setText("score: "+player_1.getScore());
         showAlert("Your roll:"+steps);
         int new_pos = player_1.pos + steps;
-
+        /**
+         * if the player's next position is the other player's position,
+         * He will be stopped by the player and stop in the previous space
+         */
         if(new_pos == player_2.pos){
             showAlert("you are stopped by the other player");
             new_pos = new_pos-1;
         }
-
+        /**
+         * condition to announce the winner
+         * show alert if next position > board size, and set player to the end point
+         * if not will compute position of player according to if player has stepped on an obstruction
+         */
         if(new_pos >= board.size){
             showAlert(player_1.getName()+" Win!");
             setPlayerPos(player_1, board.size);
         }else{
             int pitpos = new_pos;
-
             int type_next_pos = TypeList.get(new_pos-1);
 
+            /**
+             * if next position is normal ground, just set player in that position
+             */
             if(type_next_pos == 0){
                 new_pos = new_pos;
                 setPlayerPos(player_1,new_pos);
-            } else if (type_next_pos == 1) {
+            }
+            /**
+             * if next position is a bottomless pit, send player to the first square
+             */
+            else if (type_next_pos == 1) {
 
                 setPlayerPos(player_1,new_pos);
                 new_pos = 1;
                 showAlert("You drop into a bottomless pit and you are sent to the first area");
                 setPlayerPos(player_1,new_pos);
                 areas.get(pitpos-1).setVisible(true);
-            } else if (type_next_pos == 2){
+            }/**
+             * if next position is a teleporter, send player(can be chosen) to a random position
+             * @see #TeleporterChoiceDialog(int, int) set player's position according to the choice
+             */
+            else if (type_next_pos == 2){
                 setPlayerPos(player_1,new_pos);
                 Random random = new Random();
                 int randomNumber;
@@ -210,7 +278,14 @@ public class HelloController {
                 showAlert("You step onto a teleporter, you can select one player to be sent to a random position");
                 TeleporterChoiceDialog(new_pos,pitpos);
 
-            } else if (type_next_pos == 3) {
+            }
+            /**
+             * if next position is a fire pit, the player will miss one turn
+             * set player. Turn to false and check if the other player has stepped on it too
+             * if not the player will miss the next turn
+             * or the player should not have to miss the next turn
+             */
+            else if (type_next_pos == 3) {
                 if(player_2.isTurn()){
                     p2_turn_count = 0;
                     setPlayerPos(player_1,new_pos);
@@ -224,7 +299,15 @@ public class HelloController {
 
             }
 
-
+            /**
+             * set roll button visibility to visualize the turn mechanism
+             * if it is player 1's turn, player1's roll button will appear, so as player2
+             * but if the other player has missed the turn(due to fire pit)
+             * my roll button will not disappear, and the other player's button will not appear
+             * to do this, use player_turn_count, when the other miss the turn, the count will be set to 0
+             * and when I have passed my turn twice, the count will plus 1,
+             * when count reach to 1, the other player's roll button will appear
+             */
             P1_roll.setVisible(false);
             P2_roll.setVisible(true);
 
@@ -240,13 +323,18 @@ public class HelloController {
 
     }
 
+    /**
+     * similar method as onDiceRollButtonClick1()
+     * just swap the player
+     * attached to player2's dice roll button
+     */
     @FXML
     protected void onDiceRollButtonClick2() {
         if(player_2.pos>=1){
             areas.get(player_2.pos-1).setVisible(true);
         }
-        //int steps = fc.DiceRoll();
-        int steps = 2;
+        int steps = fc.DiceRoll();
+        //int steps = 2;
 
         rollNum.setText(String.valueOf(steps));
         showAlert("Your roll:"+steps);
@@ -314,10 +402,21 @@ public class HelloController {
 
     }
 
+    /**
+     * method to generate board without obstruction.
+     * it is generated by spiral structure.
+     * The principle is easy, according to different boaed size,
+     * control the direction of the board generation
+     * For example, from 0 to 10, will generate imageView in the X direction
+     * and from 10 to 20, will generate imageView in the Y direction
+     */
     public void boardGenerate(){
         int size = board.getSize();
         int x_margin = 70;
         int y_margin = 55;
+        /**
+         * get the relative path of normal ground in Maven structure
+         */
         String path = HelloApplication.class.getResource("square.png").toString();
 
         for(int i = 1; i <= size; i++){
@@ -392,6 +491,9 @@ public class HelloController {
         }
     }
 
+    /**
+     * show alert when click setName button
+     */
     private void showAlertSetName() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Name Set");
@@ -401,6 +503,10 @@ public class HelloController {
         alert.showAndWait();
     }
 
+    /**
+     * draw the line with spiral structure
+     * similar generation principle as boardGenerate()
+     */
     private void LineDraw(){
         Line line1 = new Line(70,125,750,125);
         Line line2 = new Line(750,125,750,615);
@@ -451,6 +557,10 @@ public class HelloController {
         chessboard.getChildren().add(line19);
     }
 
+    /**
+     * show alert with message equals input str
+     * @param str message showing on the alert
+     */
     private void showAlert(String str) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
@@ -458,137 +568,143 @@ public class HelloController {
         alert.showAndWait();
     }
 
+    /**
+     * generate obstructions as board size increases
+     * @see #addBottomlessPit(int) add bottomlesspit to fxml
+     * @see #addTeleporter(int) add teleporter to fxml
+     * @see #addFirePit(int) add fire pit to fxml
+     */
     private void GenerateObs(){
         //generate Obstruction as size increases
         int size = board.getSize();
 
-        addFirePit(1);
-        addFirePit(3);
+        if(size >= 20 && size < 30){
+            addTeleporter(2);
+            addBottomlessPit(6);
+            addFirePit(12);
+            addTeleporter(14);
+            addFirePit(8);
+            addBottomlessPit(19);
+        } else if (size >= 30 && size < 40) {
+            addTeleporter(2);
+            addBottomlessPit(6);
+            addFirePit(12);
+            addTeleporter(14);
+            addFirePit(8);
+            addBottomlessPit(19);
 
-//        if(size >= 20 && size < 30){
-//            addTeleporter(2);
-//            addBottomlessPit(6);
-//            addFirePit(12);
-//            addTeleporter(14);
-//            addFirePit(8);
-//            addBottomlessPit(19);
-//        } else if (size >= 30 && size < 40) {
-//            addTeleporter(2);
-//            addBottomlessPit(6);
-//            addFirePit(12);
-//            addTeleporter(14);
-//            addFirePit(8);
-//            addBottomlessPit(19);
-//
-//            addFirePit(24);
-//
-//            addBottomlessPit(26);
-//        } else if (size >= 40 && size < 50) {
-//            addTeleporter(2);
-//            addBottomlessPit(6);
-//            addFirePit(12);
-//            addTeleporter(14);
-//            addFirePit(8);
-//            addBottomlessPit(19);
-//
-//            addFirePit(24);
-//
-//            addBottomlessPit(26);
-//
-//            addTeleporter(30);
-//            addFirePit(38);
-//        }else if (size >= 50 && size < 60) {
-//            addTeleporter(2);
-//            addBottomlessPit(6);
-//            addFirePit(12);
-//            addTeleporter(14);
-//            addFirePit(8);
-//            addBottomlessPit(19);
-//
-//            addFirePit(24);
-//
-//            addBottomlessPit(26);
-//
-//            addTeleporter(30);
-//            addFirePit(38);
-//
-//            addTeleporter(42);
-//            addBottomlessPit(45);
-//        }else if (size >= 60 && size < 70) {
-//            addTeleporter(2);
-//            addBottomlessPit(6);
-//            addFirePit(12);
-//            addTeleporter(14);
-//            addFirePit(8);
-//            addBottomlessPit(19);
-//
-//            addFirePit(24);
-//
-//            addBottomlessPit(26);
-//
-//            addTeleporter(30);
-//            addFirePit(38);
-//
-//            addTeleporter(42);
-//            addBottomlessPit(45);
-//
-//            addBottomlessPit(55);
-//
-//            addBottomlessPit(59);
-//        }
-//        else if (size >= 70 && size < 80) {
-//            addTeleporter(2);
-//            addBottomlessPit(6);
-//            addFirePit(12);
-//            addTeleporter(14);
-//            addFirePit(8);
-//            addBottomlessPit(19);
-//
-//            addFirePit(24);
-//
-//            addBottomlessPit(26);
-//
-//            addTeleporter(30);
-//            addFirePit(38);
-//
-//            addTeleporter(42);
-//            addBottomlessPit(45);
-//
-//            addBottomlessPit(55);
-//
-//            addBottomlessPit(59);
-//            addTeleporter(77);
-//        }else {
-//            addTeleporter(2);
-//            addBottomlessPit(6);
-//            addFirePit(12);
-//            addTeleporter(14);
-//            addFirePit(8);
-//            addBottomlessPit(19);
-//
-//            addFirePit(24);
-//
-//            addBottomlessPit(26);
-//
-//            addTeleporter(30);
-//            addFirePit(38);
-//
-//            addTeleporter(42);
-//            addBottomlessPit(45);
-//
-//            addBottomlessPit(55);
-//
-//            addBottomlessPit(59);
-//            addTeleporter(77);
-//            addFirePit(81);
-//            addBottomlessPit(83);
-//            addTeleporter(87);
-//        }
+            addFirePit(24);
+
+            addBottomlessPit(26);
+        } else if (size >= 40 && size < 50) {
+            addTeleporter(2);
+            addBottomlessPit(6);
+            addFirePit(12);
+            addTeleporter(14);
+            addFirePit(8);
+            addBottomlessPit(19);
+
+            addFirePit(24);
+
+            addBottomlessPit(26);
+
+            addTeleporter(30);
+            addFirePit(38);
+        }else if (size >= 50 && size < 60) {
+            addTeleporter(2);
+            addBottomlessPit(6);
+            addFirePit(12);
+            addTeleporter(14);
+            addFirePit(8);
+            addBottomlessPit(19);
+
+            addFirePit(24);
+
+            addBottomlessPit(26);
+
+            addTeleporter(30);
+            addFirePit(38);
+
+            addTeleporter(42);
+            addBottomlessPit(45);
+        }else if (size >= 60 && size < 70) {
+            addTeleporter(2);
+            addBottomlessPit(6);
+            addFirePit(12);
+            addTeleporter(14);
+            addFirePit(8);
+            addBottomlessPit(19);
+
+            addFirePit(24);
+
+            addBottomlessPit(26);
+
+            addTeleporter(30);
+            addFirePit(38);
+
+            addTeleporter(42);
+            addBottomlessPit(45);
+
+            addBottomlessPit(55);
+
+            addBottomlessPit(59);
+        }
+        else if (size >= 70 && size < 80) {
+            addTeleporter(2);
+            addBottomlessPit(6);
+            addFirePit(12);
+            addTeleporter(14);
+            addFirePit(8);
+            addBottomlessPit(19);
+
+            addFirePit(24);
+
+            addBottomlessPit(26);
+
+            addTeleporter(30);
+            addFirePit(38);
+
+            addTeleporter(42);
+            addBottomlessPit(45);
+
+            addBottomlessPit(55);
+
+            addBottomlessPit(59);
+            addTeleporter(77);
+        }else {
+            addTeleporter(2);
+            addBottomlessPit(6);
+            addFirePit(12);
+            addTeleporter(14);
+            addFirePit(8);
+            addBottomlessPit(19);
+
+            addFirePit(24);
+
+            addBottomlessPit(26);
+
+            addTeleporter(30);
+            addFirePit(38);
+
+            addTeleporter(42);
+            addBottomlessPit(45);
+
+            addBottomlessPit(55);
+
+            addBottomlessPit(59);
+            addTeleporter(77);
+            addFirePit(81);
+            addBottomlessPit(83);
+            addTeleporter(87);
+        }
 
     }
 
 
-
+    /**
+     * method to generate bottomless pit with position(pos) on the board
+     * @param pos position of bottomless pit
+     */
     private void addBottomlessPit(int pos){
         String path = HelloApplication.class.getResource("bottomlessPit.jpg").toString();
         Image image = new Image(path);
@@ -598,20 +714,34 @@ public class HelloController {
 
         Obstruction obs = new bottomlessPit(pos);
 
+        /**
+         * set the previous imageView in the pos position invisible
+         */
         areas.get(obs.getPos()).setVisible(false);
 
+        /**
+         * set the bottomlesspit imageView in the pos position
+         */
         imageView.setLayoutX(areas.get(obs.getPos()).getLayoutX());
         imageView.setLayoutY(areas.get(obs.getPos()).getLayoutY() + 5);
 
         areas.set(obs.getPos(),imageView);
         chessboard.getChildren().add(imageView);
 
+        /**
+         * add to typeList to record this position is what kind of obstruction
+         */
         TypeList.set(obs.getPos(),obs.getType());
 //        for(int i = 0 ; i < TypeList.size(); i++){
 //            System.out.println(TypeList.get(i));
 //        }
     }
 
+    /**
+     * similar as addBottonlessPit() method
+     * just change the obstruction type
+     * @param pos position of teleporter
+     */
     private void addTeleporter(int pos){
         String path = HelloApplication.class.getResource("teleporter.png").toString();
         Image image = new Image(path);
@@ -633,6 +763,11 @@ public class HelloController {
 
     }
 
+    /**
+     * similar as addBottonlessPit() method
+     * just change the obstruction type
+     * @param pos position of fire pit
+     */
     private void addFirePit(int pos){
         String path = HelloApplication.class.getResource("firepit.png").toString();
         Image image = new Image(path);
@@ -654,6 +789,17 @@ public class HelloController {
 
     }
 
+    /**
+     * Showing choice dialog when one player step on a teleporter.
+     * this is the choice dialog of player1.
+     * if player 1 choose send itself to a random place.
+     * player1 will be sent to a random place.
+     * if player1 choose to send player2, it will stay on the teleporter and player2 will be sent to a random position
+     * the position will be the random number between 1 and board size.
+     * @param next_pos an int to record the random position a player will be sent to.
+     * @param pitpos an int to record the teleporter's position.
+     * else itself will be sent to a random place
+     */
     private void TeleporterChoiceDialog(int next_pos,int pitpos) {
         List<String> choices = new ArrayList<>();
         choices.add("me");
@@ -679,6 +825,13 @@ public class HelloController {
         });
     }
 
+    /**
+     * Showing choice dialog when one player step on a teleporter.
+     * this is the choice dialog of player2.
+     * similar as TeleporterChoiceDialog()
+     * @param next_pos an int to record the random position a player will be sent to.
+     * @param pitpos an int to record the teleporter's position.
+     */
     private void TeleporterChoiceDialog2(int next_pos,int pitpos) {
         List<String> choices = new ArrayList<>();
         choices.add("me");
@@ -704,6 +857,15 @@ public class HelloController {
         });
     }
 
+    /**
+     * set one player to a position in the fxml.
+     * first make the position where the player will be set invisible.
+     * then set the player's layout position the same as the imageView where the player will be set
+     * For example, if player will be set in 6
+     * then the player will be set to the layout position of 6th imageView of areas
+     * @param player player to be set
+     * @param new_pos position of player to be set
+     */
     private void setPlayerPos(Player player, int new_pos){
         if(player == player_1){
             player_1.setPos(new_pos);

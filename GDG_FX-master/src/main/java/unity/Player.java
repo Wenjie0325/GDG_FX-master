@@ -10,6 +10,10 @@ public class Player {
         this.pos = pos;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public String name;
 
     public int getPos() {
@@ -17,6 +21,16 @@ public class Player {
     }
 
     public int pos;
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int score;
 
     public boolean isTurn() {
         return turn;
@@ -28,8 +42,10 @@ public class Player {
 
     public boolean turn = true;
 
-    public Player(int position){
+    public Player(int position, String name, int score){
+        this.name = name;
         this.pos = position;
+        this.score = score;
     }
 
     public Player(){}

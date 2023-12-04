@@ -11,27 +11,46 @@
 <AnchorPane fx:id="chessboard" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.gdg_fx.HelloController">
    <children>
       <Line endX="799.9999389648438" endY="113.0071792602539" startX="-2.179826879000757E-6" startY="113.0071792602539" />
-      <Button fx:id="P1_roll" layoutX="641.0" layoutY="25.0" mnemonicParsing="false" onAction="#onDiceRollButtonClick1" text="roll" textFill="#1f1d1d" visible="false" />
-      <Label fx:id="rollNum" layoutX="703.0" layoutY="49.0" />
-      <ImageView fx:id="player1" fitHeight="53.0" fitWidth="54.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+      <Button fx:id="P1_roll" layoutX="637.0" layoutY="16.0" mnemonicParsing="false" onAction="#onDiceRollButtonClick1" text="roll" textFill="#1f1d1d" visible="false" />
+      <Label fx:id="rollNum" layoutX="328.0" layoutY="30.0" prefHeight="37.0" prefWidth="35.0" scaleX="2.0" scaleY="2.0" scaleZ="2.0" />
+      <ImageView fx:id="player1" fitHeight="45.0" fitWidth="45.0" layoutX="14.0" layoutY="120.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@p1.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="player2" fitHeight="53.0" fitWidth="54.0" layoutY="178.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="player2" fitHeight="45.0" fitWidth="45.0" layoutX="14.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@p2.png" />
          </image>
       </ImageView>
-      <Button fx:id="P2_roll" layoutX="641.0" layoutY="64.0" mnemonicParsing="false" onAction="#onDiceRollButtonClick2" text="roll" visible="false" />
-      <Label fx:id="Player1_Name_Label" layoutX="430.0" layoutY="29.0" text="Player1" />
-      <Label fx:id="Player2_Name_Label" layoutX="430.0" layoutY="68.0" text="Player2" />
-      <Button layoutX="19.0" layoutY="57.0" mnemonicParsing="false" onAction="#start" prefHeight="37.0" prefWidth="67.0" text="start" />
+      <Button fx:id="P2_roll" layoutX="636.0" layoutY="76.0" mnemonicParsing="false" onAction="#onDiceRollButtonClick2" prefHeight="23.0" prefWidth="35.0" text="roll" visible="false" />
+      <Label fx:id="Player1_Name_Label" layoutX="430.0" layoutY="21.0" text="Player1" />
+      <Label fx:id="Player2_Name_Label" layoutX="430.0" layoutY="76.0" text="Player2" />
+      <Button layoutX="17.0" layoutY="57.0" mnemonicParsing="false" onAction="#start" prefHeight="37.0" prefWidth="157.0" text="start" />
       <Button fx:id="setSize_Button" layoutX="111.0" layoutY="25.0" mnemonicParsing="false" onAction="#setSize" prefHeight="23.0" prefWidth="60.0" text="setsize" />
-      <TextField fx:id="name1" layoutX="571.0" layoutY="25.0" prefHeight="15.0" prefWidth="60.0" />
-      <TextField fx:id="name2" layoutX="571.0" layoutY="64.0" prefHeight="15.0" prefWidth="60.0" />
-      <TextField fx:id="size" layoutX="19.0" layoutY="25.0" prefHeight="15.0" prefWidth="85.0" />
-      <Button fx:id="setName_button1" layoutX="485.0" layoutY="25.0" mnemonicParsing="false" onAction="#setName1" prefHeight="23.0" prefWidth="75.0" text="setName" />
-      <Button fx:id="setName_button2" layoutX="485.0" layoutY="64.0" mnemonicParsing="false" onAction="#setName2" prefHeight="23.0" prefWidth="75.0" text="setName" />
+      <TextField fx:id="name1" layoutX="571.0" layoutY="17.0" prefHeight="15.0" prefWidth="60.0" />
+      <TextField fx:id="name2" layoutX="571.0" layoutY="74.0" prefHeight="23.0" prefWidth="60.0" />
+      <TextField fx:id="Setsize" layoutX="19.0" layoutY="25.0" prefHeight="15.0" prefWidth="85.0" />
+      <Button fx:id="setName_button1" layoutX="485.0" layoutY="17.0" mnemonicParsing="false" onAction="#setName1" prefHeight="23.0" prefWidth="75.0" text="setName" />
+      <Button fx:id="setName_button2" layoutX="485.0" layoutY="74.0" mnemonicParsing="false" onAction="#setName2" prefHeight="23.0" prefWidth="75.0" text="setName" />
+      <Label fx:id="Score_p1" layoutX="679.0" layoutY="21.0" text="Score: 0" />
+      <Label fx:id="Score_p2" layoutX="679.0" layoutY="80.0" text="Score: 0" />
+      <Label layoutX="222.0" layoutY="41.0" text="Roll Number:" textAlignment="CENTER" />
+      <Line endX="800.0" endY="53.78571319580078" startX="421.2142639160156" startY="53.78571701049805" />
+      <Line endX="420.0714416503906" endY="-4.359654212748865E-6" startX="420.0714416503906" startY="112.5071792602539" />
+      <Line endX="206.35716247558594" endY="7.084437584126135E-6" startX="206.35714721679688" startY="112.5071792602539" />
+      <Line endX="799.9999389648438" endY="-6.5394810917496216E-6" startX="1.3078962183499243E-5" startY="3.2697405458748108E-6" />
+      <Line endX="-0.4999956488609314" endY="113.50718688964844" startX="-2.179826879000757E-6" startY="0.707112729549408" />
+      <Line endX="790.4999389648438" endY="103.50718688964844" layoutX="10.0" layoutY="10.0" startX="790.7069702148438" startY="-9.292889595031738" />
+      <ImageView fx:id="player11" fitHeight="23.0" fitWidth="35.0" layoutX="756.0" layoutY="17.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@p1.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="player21" fitHeight="23.0" fitWidth="35.0" layoutX="756.0" layoutY="72.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@p2.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

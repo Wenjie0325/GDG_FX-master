@@ -30,7 +30,13 @@ public class HelloController {
     private Label rollNum;
 
     @FXML
-    private TextField size;
+    private Label Score_p1;
+
+    @FXML
+    private Label Score_p2;
+
+    @FXML
+    private TextField Setsize;
 
     @FXML
     private TextField name1;
@@ -66,8 +72,8 @@ public class HelloController {
 
     private ArrayList<ImageView> areas = new ArrayList<ImageView>();
 
-    Player player_1 = new Player(0);
-    Player player_2 = new Player(0);
+    Player player_1 = new Player(0,"Player1",0);
+    Player player_2 = new Player(0,"Player2",0);
 
     ArrayList<Integer> TypeList = new ArrayList<Integer>();
 
@@ -95,23 +101,27 @@ public class HelloController {
             alert.showAndWait();
         }
 
-        for(int i = 0 ; i < TypeList.size(); i++){
-            System.out.println(TypeList.get(i));
-        }
+//        for(int i = 0 ; i < TypeList.size(); i++){
+//            System.out.println(TypeList.get(i));
+//        }
     }
 
     @FXML
     protected void setSize() {
-        String UserInput = size.getText();
+        String UserInput = Setsize.getText();
         int size = Integer.parseInt(UserInput);
         if(size > 90){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setHeaderText(null);
-            alert.setContentText("Input size should smaller than 90 !");
+            alert.setContentText("Input size should no bigger than 90 !");
             alert.showAndWait();
-        }else{
+
+        } else if (size < 20) {
+            showAlert("Your board is too small! size should bigger than 20");
+        } else{
             board.setSize(size);
             setSize_Button.setVisible(false);
+            Setsize.setVisible(false);
             showAlert("set size success!");
         }
 
@@ -159,10 +169,12 @@ public class HelloController {
             areas.get(player_1.pos-1).setVisible(true);
         }
         //int steps = fc.DiceRoll();
-        int steps = 2;
+        int steps = 1;
 
         rollNum.setText(String.valueOf(steps));
-        showAlert("your roll:"+steps);
+        player_1.score += steps;
+        Score_p1.setText("score: "+player_1.getScore());
+        showAlert("Your roll:"+steps);
         int new_pos = player_1.pos + steps;
 
         if(new_pos == player_2.pos){
@@ -171,7 +183,7 @@ public class HelloController {
         }
 
         if(new_pos >= board.size){
-            showAlert("Win!");
+            showAlert(player_1.getName()+" Win!");
             setPlayerPos(player_1, board.size);
         }else{
             int pitpos = new_pos;
@@ -182,6 +194,7 @@ public class HelloController {
                 new_pos = new_pos;
                 setPlayerPos(player_1,new_pos);
             } else if (type_next_pos == 1) {
+
                 setPlayerPos(player_1,new_pos);
                 new_pos = 1;
                 showAlert("You drop into a bottomless pit and you are sent to the first area");
@@ -198,10 +211,16 @@ public class HelloController {
                 TeleporterChoiceDialog(new_pos,pitpos);
 
             } else if (type_next_pos == 3) {
-                p1_turn_count = 0;
-                setPlayerPos(player_1,new_pos);
-                showAlert("You step onto a fire pit, you will miss the next turn");
-                player_1.setTurn(false);
+                if(player_2.isTurn()){
+                    p2_turn_count = 0;
+                    setPlayerPos(player_1,new_pos);
+                    showAlert("You step onto a fire pit, you will miss the next turn");
+                    player_1.setTurn(false);
+                }else {
+                    setPlayerPos(player_1,new_pos);
+                    showAlert("You step onto a fire pit, but another player has missed turn, so you will not miss your turn");
+                }
+
 
             }
 
@@ -227,10 +246,14 @@ public class HelloController {
             areas.get(player_2.pos-1).setVisible(true);
         }
         //int steps = fc.DiceRoll();
-        int steps = 4;
+        int steps = 2;
 
         rollNum.setText(String.valueOf(steps));
-        showAlert("your roll:"+steps);
+        showAlert("Your roll:"+steps);
+
+        player_2.score += steps;
+        Score_p2.setText("score: "+player_2.getScore());
+
         int new_pos = player_2.pos + steps;
 
         if(new_pos == player_1.pos){
@@ -239,7 +262,7 @@ public class HelloController {
         }
 
         if(new_pos >= board.size){
-            showAlert("Win!");
+            showAlert(player_2.getName()+" Win!");
             setPlayerPos(player_2, board.size);
         }else{
             int pitpos = new_pos;
@@ -266,13 +289,18 @@ public class HelloController {
                 TeleporterChoiceDialog2(new_pos,pitpos);
                 areas.get(pitpos-1).setVisible(true);
             } else if (type_next_pos == 3) {
-                p2_turn_count = 0;
-                setPlayerPos(player_2,new_pos);
-                showAlert("You step onto a fire pit, you will miss the next turn");
-                player_2.setTurn(false);
+                if(player_1.isTurn()){
+                    p1_turn_count = 0;
+                    setPlayerPos(player_2,new_pos);
+                    showAlert("You step onto a fire pit, you will miss the next turn");
+                    player_2.setTurn(false);
+                }else {
+                    setPlayerPos(player_2,new_pos);
+                    showAlert("You step onto a fire pit, but another player has missed turn, so you will not miss your turn");
+                }
+
 
             }
-
 
             P2_roll.setVisible(false);
             P1_roll.setVisible(true);
@@ -284,12 +312,7 @@ public class HelloController {
             }
         }
 
-
-
-
     }
-
-
 
     public void boardGenerate(){
         int size = board.getSize();
@@ -436,18 +459,135 @@ public class HelloController {
     }
 
     private void GenerateObs(){
-        addBottomlessPit(2);
+        //generate Obstruction as size increases
+        int size = board.getSize();
 
-        addBottomlessPit(10);
+        addFirePit(1);
+        addFirePit(3);
 
-        addFirePit(15);
-
-
-        addTeleporter(3);
-
-        addTeleporter(7);
+//        if(size >= 20 && size < 30){
+//            addTeleporter(2);
+//            addBottomlessPit(6);
+//            addFirePit(12);
+//            addTeleporter(14);
+//            addFirePit(8);
+//            addBottomlessPit(19);
+//        } else if (size >= 30 && size < 40) {
+//            addTeleporter(2);
+//            addBottomlessPit(6);
+//            addFirePit(12);
+//            addTeleporter(14);
+//            addFirePit(8);
+//            addBottomlessPit(19);
+//
+//            addFirePit(24);
+//
+//            addBottomlessPit(26);
+//        } else if (size >= 40 && size < 50) {
+//            addTeleporter(2);
+//            addBottomlessPit(6);
+//            addFirePit(12);
+//            addTeleporter(14);
+//            addFirePit(8);
+//            addBottomlessPit(19);
+//
+//            addFirePit(24);
+//
+//            addBottomlessPit(26);
+//
+//            addTeleporter(30);
+//            addFirePit(38);
+//        }else if (size >= 50 && size < 60) {
+//            addTeleporter(2);
+//            addBottomlessPit(6);
+//            addFirePit(12);
+//            addTeleporter(14);
+//            addFirePit(8);
+//            addBottomlessPit(19);
+//
+//            addFirePit(24);
+//
+//            addBottomlessPit(26);
+//
+//            addTeleporter(30);
+//            addFirePit(38);
+//
+//            addTeleporter(42);
+//            addBottomlessPit(45);
+//        }else if (size >= 60 && size < 70) {
+//            addTeleporter(2);
+//            addBottomlessPit(6);
+//            addFirePit(12);
+//            addTeleporter(14);
+//            addFirePit(8);
+//            addBottomlessPit(19);
+//
+//            addFirePit(24);
+//
+//            addBottomlessPit(26);
+//
+//            addTeleporter(30);
+//            addFirePit(38);
+//
+//            addTeleporter(42);
+//            addBottomlessPit(45);
+//
+//            addBottomlessPit(55);
+//
+//            addBottomlessPit(59);
+//        }
+//        else if (size >= 70 && size < 80) {
+//            addTeleporter(2);
+//            addBottomlessPit(6);
+//            addFirePit(12);
+//            addTeleporter(14);
+//            addFirePit(8);
+//            addBottomlessPit(19);
+//
+//            addFirePit(24);
+//
+//            addBottomlessPit(26);
+//
+//            addTeleporter(30);
+//            addFirePit(38);
+//
+//            addTeleporter(42);
+//            addBottomlessPit(45);
+//
+//            addBottomlessPit(55);
+//
+//            addBottomlessPit(59);
+//            addTeleporter(77);
+//        }else {
+//            addTeleporter(2);
+//            addBottomlessPit(6);
+//            addFirePit(12);
+//            addTeleporter(14);
+//            addFirePit(8);
+//            addBottomlessPit(19);
+//
+//            addFirePit(24);
+//
+//            addBottomlessPit(26);
+//
+//            addTeleporter(30);
+//            addFirePit(38);
+//
+//            addTeleporter(42);
+//            addBottomlessPit(45);
+//
+//            addBottomlessPit(55);
+//
+//            addBottomlessPit(59);
+//            addTeleporter(77);
+//            addFirePit(81);
+//            addBottomlessPit(83);
+//            addTeleporter(87);
+//        }
 
     }
+
+
 
     private void addBottomlessPit(int pos){
         String path = HelloApplication.class.getResource("bottomlessPit.jpg").toString();
